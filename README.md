@@ -15,10 +15,10 @@
 >
 >> E-Mail: v.difalco@studenti.unica.it
 
-#### Jacopo Piredda
-> Matricola: 60/61/65756
+#### Gabriele Varchetta
+> Matricola: 60/61/65976
 >
->> E-Mail: j.piredda2@studenti.unica.it
+>> E-Mail: g.varchetta@studenti.unica.it
 
 
 #### Antonio Bachis

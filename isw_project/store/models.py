@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 
 class Product(models.Model):
-    id = models.AutoField()
     name = models.CharField(max_length=256)
     description = models.TextField(max_length=512)
     category = models.CharField(max_length=256)
@@ -13,25 +12,23 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    id = models.AutoField(primary_key=True)
     price = models.FloatField()
-    date = models.DateTimeField(auto_now_add=True)
-    products = models.ManyToManyField(Product, through_fields='OrderProduct')
+    placed_at = models.DateTimeField(auto_now_add=True)
 
 
 class ShoppingCart(models.Model):
-    products = models.ManyToManyField(Product, through='CartProduct')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class CartProduct(models.Model):
+    shopping_cart = models.OneToOneField(ShoppingCart, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
 
 
 class OrderProduct(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
-
-class CartProduct(models.Model):
-    shopping_cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
 

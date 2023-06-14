@@ -2,30 +2,37 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
+
 class Product(models.Model):
     id = models.AutoField()
-    name = models.CharField()
-    decription = models.TextField()
-    category = models.CharField()
+    name = models.CharField(max_length=256)
+    description = models.TextField(max_length=512)
+    category = models.CharField(max_length=256)
     price = models.FloatField()
     # Altri campi del prodotto
+
+
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     price = models.FloatField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
+    products = models.ManyToManyField(Product, through_fields='OrderProduct')
+
 
 class ShoppingCart(models.Model):
-    products = models.ManyToManyField(Product, through='OrderProduct')
+    products = models.ManyToManyField(Product, through='CartProduct')
+
 
 class OrderProduct(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    order = models.ManyToOneRel(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+
 class CartProduct(models.Model):
     shopping_cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-
 
 
 class Customer(models.Model):

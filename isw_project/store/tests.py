@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
 
+
 class TestUseCase006(LiveServerTestCase):
     def setUp(self) -> None:
         self.driver = webdriver.Safari()

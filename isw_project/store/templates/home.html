@@ -4,6 +4,10 @@
     <div class="login-container">
         <div class="form-container">
             <div class="title"> Welcome to PentaShop</div>
+            <form>
+                { % csrf_token%}
+                 {{ form }}
+            </form>
             <div class="buttons-container">
                 <button class="styled-button">Login</button>
                 <button class="styled-button">Register</button>

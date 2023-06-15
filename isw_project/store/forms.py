@@ -1,4 +1,4 @@
-from models import Customer
+from .models import Customer
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
@@ -71,6 +71,6 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = Customer
         fields = [
-            'username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'birth_day',
+             'email', 'first_name', 'last_name', 'password1', 'password2', 'birth_day',
             'country', 'region', 'city', 'street_address', 'postal_code', 'province'
         ]

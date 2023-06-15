@@ -6,3 +6,6 @@ from store import  forms
 def home (request):
     return render(request, 'home.html')
 
+def product_page (request):
+    return render(request,'product_page.html')
+

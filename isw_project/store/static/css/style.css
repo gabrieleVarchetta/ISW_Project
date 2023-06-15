@@ -1,9 +1,27 @@
+
+/*HEADER*/
+
 .header{
     display: flex;
     background-color: black;
-    height: 200px;
+    justify-content: center;
+    height: 150px;
     width: 100vw;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    align-items: center;
+    align-content: baseline;
+    padding: 10px;
+
 }
+
+.header-buttons{
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+
+/*END-HEADER*/
 
 body{
     margin: 0px;

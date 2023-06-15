@@ -8,7 +8,9 @@ class Product(models.Model):
     description = models.TextField(max_length=512)
     category = models.CharField(max_length=256)
     price = models.FloatField()
-    # Altri campi del prodotto
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
@@ -35,6 +37,9 @@ class OrderProduct(models.Model):
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_day = models.DateField()
+
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
 
 
 class Address(models.Model):

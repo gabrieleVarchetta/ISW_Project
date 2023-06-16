@@ -10,7 +10,7 @@ class Product(models.Model):
     price = models.FloatField()
 
     def __str__(self):
-        return self.name
+        return f'Product: {self.name}, Price: {self.price}'
 
 
 class Order(models.Model):
@@ -49,6 +49,9 @@ class Address(models.Model):
     street_address = models.CharField(max_length=256)
     postal_code = models.CharField(max_length=256)
     province = models.CharField(max_length=256)
+
+    def __str__(self):
+        return f'{self.street_address}, {self.city}, {self.postal_code}, {self.region}, {self.country}'
 
     class Meta:
         abstract = True

@@ -1,0 +1,35 @@
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html>
+   <head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  </head>
+  <body>
+
+      <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand mx-auto" href="">
+          PentaShop
+        </a>
+      </nav>
+      <br><br>
+
+      <div class="container">
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <br>
+        <button class ="btn btn-primary" type="submit" id= "submit_button">Submit</button>
+          <hr>
+          <p class="text-center">Already have an account? <a href="{% url 'login' %}">Log In Now</a></p>
+      </form>
+      </div>
+  </body>
+</html>

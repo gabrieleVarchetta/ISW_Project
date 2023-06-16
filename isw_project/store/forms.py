@@ -1,76 +1,24 @@
-from models import Customer
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.password_validation import validate_password
+from django.core.validators import validate_email
 
 
-class RegisterForm(UserCreationForm):
+class RegisterForm(forms.Form):
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
     email = forms.EmailField(
-        max_length=100,
-        required=True,
-        help_text='Enter Email Address',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+        validators=[validate_email],
+        widget=forms.EmailInput())
+    password = forms.CharField(
+        max_length=200,
+        widget=forms.PasswordInput(),
+        validators=[validate_password]
     )
-    first_name = forms.CharField(
-        max_length=100,
-        required=True,
-        help_text='Enter First Name',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
-    )
-    last_name = forms.CharField(
-        max_length=100,
-        required=True,
-        help_text='Enter Last Name',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
-    )
-    password1 = forms.CharField(
-        help_text='Enter Password',
-        required=True,
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
-    )
-    password2 = forms.CharField(
-        required=True,
-        help_text='Enter Password Again',
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password Again'}),
-    )
-    birth_day = forms.DateField(
-        required=True,
-        help_text='Enter BirthDay',
-        widget=forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Birthday'})
-    )
-    country = forms.CharField(
-        required=True,
-        help_text='Enter Country',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'})
-    )
-    region = forms.CharField(
-        required=True,
-        help_text='Enter Region',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Region'})
-    )
-    city = forms.CharField(
-        required=True,
-        help_text='Enter City',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'})
-    )
-    street_address = forms.CharField(
-        required=True,
-        help_text='Enter Street Address',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street Address'})
-    )
-    postal_code = forms.CharField(
-        required=True,
-        help_text='Enter Postal Code',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'})
-    )
-    province = forms.CharField(
-        required=True,
-        help_text='Enter Province',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Province'})
-    )
-
-    class Meta:
-        model = Customer
-        fields = [
-            'username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'birth_day',
-            'country', 'region', 'city', 'street_address', 'postal_code', 'province'
-        ]
+    username = forms.CharField(max_length=100)
+    birth_day = forms.DateField()
+    country = forms.CharField(max_length=256)
+    region = forms.CharField(max_length=256)
+    city = forms.CharField(max_length=256)
+    street_address = forms.CharField(max_length=256)
+    postal_code = forms.CharField(max_length=256)
+    province = forms.CharField(max_length=256)

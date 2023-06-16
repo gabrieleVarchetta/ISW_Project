@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,7 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store',
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

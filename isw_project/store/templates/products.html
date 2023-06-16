@@ -1,28 +1,45 @@
+
+{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
 <body>
-<a href="{% url 'logout' %}">Logout</a>
-<h1> Ciao {{ customer }}, abiti in {{ customer.residentialaddress }} </h1>
+
+
 {% if product_list %}
 
-    <div style="display: grid">
-    {% for product in product_list %}
-          <div style="width: 200px;display: flex">
-          {{ product }}
-          </div>
+    <div class="header">
+        <div class="header-buttons">
+            <button class="header-button-style">Cart</button>
+            <button class="header-button-style">Home</button>
+            <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
+        </div>
+        <div class="input-container">
+            <input placeholder="Cerca un prodotto">
+        </div>
     </div>
-
-
-
-
-      {% endfor %}
-
-
-    {% if is_paginated %}
+    <div class="content-section">
+    <h2> Ciao {{ customer }} </h2>
+        <h2>Products</h2>
+        <div class="grid-container">
+             {% for product in product_list %}
+            <div class="product-card">
+                <div>
+                    <h2>{{ product.name }}</h2>
+                    <p>{{ product.description }}</p>
+                    <p style="font-weight: bolder">{{ product.price }}€</p>
+                    <button>Add To Cart</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+{% if is_paginated %}
         <div class="pagination">
             <span class="page-links">
                 {% if page_obj.has_previous %}
@@ -40,5 +57,9 @@
   {% else %}
     <p>There are no products in the library.</p>
   {% endif %}
+    </div>
+
+
+
 </body>
 </html>

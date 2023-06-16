@@ -18,10 +18,23 @@ class Order(models.Model):
 
 class ShoppingCart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    product = models.ManyToManyField(Product, through='CartProduct')
+
+    def add_product(self, product, quantity=1):
+        cart_product, created = CartProduct.objects.get_or_create(cart=self, product=product)
+        cart_product.quantity += quantity
+        cart_product.save()
+
+    def remove_product(self, product):
+        CartProduct.objects.filter(cart=self, product=product).delete()
+
+    def get_cart_items(self):
+        return self.cart_product.all()
 
 
 class CartProduct(models.Model):
-    shopping_cart = models.OneToOneField(ShoppingCart, on_delete=models.CASCADE)
+    shopping_cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE, related_name='cart_product')
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 

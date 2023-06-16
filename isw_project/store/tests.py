@@ -130,41 +130,116 @@ class TestUseCase011(LiveServerTestCase):
 if __name__ == '__main__':
     unittest.main()
 
-# class TestUseCase012(LiveServerTestCase):
-#     def setUp(self):
-#         self.driver = webdriver.Safari()
+class TestUseCase012(LiveServerTestCase):
+     def setUp(self):
+         self.driver = webdriver.Safari()
 
-#     def test_case_027(self):
-#         # Accedi come amministratore
-#         self.driver.get(self.live_server_url + '/admin/')
-#         username_input = self.driver.find_element(By.NAME, 'username')
-#         username_input.send_keys('admin')
-#         password_input = self.driver.find_element(By.NAME, 'password')
-#         password_input.send_keys('password')
-#         password_input.send_keys(Keys.ENTER)
+     def test_case_027(self):
+         # Accedi come amministratore
+         self.driver.get(self.live_server_url + '/admin/')
+         username_input = self.driver.find_element(By.NAME, 'username')
+         username_input.send_keys('admin')
+         password_input = self.driver.find_element(By.NAME, 'password')
+         password_input.send_keys('password')
+         password_input.send_keys(Keys.ENTER)
 
-#         # Vai alla pagina di gestione dei prodotti
-#         self.driver.get(self.live_server_url + '/admin/products/')
-#         add_product_link = self.driver.find_element(By.LINK_TEXT, 'Aggiungi prodotto')
-#         add_product_link.click()
+         # Vai alla pagina di gestione dei prodotti
+         self.driver.get(self.live_server_url + '/admin/products/')
+         add_product_link = self.driver.find_element(By.LINK_TEXT, 'Aggiungi prodotto')
+         add_product_link.click()
 
-#         # Compila il form per aggiungere un nuovo prodotto
-#         name_input = self.driver.find_element(By.NAME, 'name')
-#         name_input.send_keys('Nuovo prodotto')
-#         description_input = self.driver.find_element(By.NAME, 'description')
-#         description_input.send_keys('Descrizione del nuovo prodotto')
-#         price_input = self.driver.find_element(By.NAME, 'price')
-#         price_input.send_keys('10.99')
+         # Compila il form per aggiungere un nuovo prodotto
+         name_input = self.driver.find_element(By.NAME, 'name')
+         name_input.send_keys('Nuovo prodotto')
+         description_input = self.driver.find_element(By.NAME, 'description')
+         description_input.send_keys('Descrizione del nuovo prodotto')
+         price_input = self.driver.find_element(By.NAME, 'price')
+         price_input.send_keys('10.99')
 
-#         # Invia il form
-#         save_button = self.driver.find_element(By.NAME, '_save')
-#         save_button.click()
+         # Invia il form
+         save_button = self.driver.find_element(By.NAME, '_save')
+         save_button.click()
 
-#         # Verifica che il prodotto sia stato aggiunto correttamente
-#         product_link = self.driver.find_element(By.LINK_TEXT, 'Nuovo prodotto')
-#         self.assertIsNotNone(product_link)
-#     def tearDown(self) -> None:
-#         self.driver.close()
+         # Verifica che il prodotto sia stato aggiunto correttamente
+         product_link = self.driver.find_element(By.LINK_TEXT, 'Nuovo prodotto')
+         self.assertIsNotNone(product_link)
+
+     def test_case_028(self):
+         self.driver.get(self.live_server_url + '/admin/')
+         username_input = self.driver.find_element(By.NAME, 'username')
+         username_input.send_keys('admin')
+         password_input = self.driver.find_element(By.NAME, 'password')
+         password_input.send_keys('password')
+         password_input.send_keys(Keys.ENTER)
+
+         self.driver.get(self.live_server_url + '/admin/products/')
+         add_product_link = self.driver.find_element(By.LINK_TEXT, 'Aggiungi prodotto')
+         add_product_link.click()
+
+         name_input = self.driver.find_element(By.NAME, 'name')
+         name_input.send_keys('10.99')
+         description_input = self.driver.find_element(By.NAME, 'description')
+         description_input.send_keys('Descrizione del nuovo prodotto')
+
+         # Invia il form
+         save_button = self.driver.find_element(By.NAME, '_save')
+         save_button.click()
+
+        #Check if the current url is equal to the expected one, if admin made a mistake urls are equal
+         self.assertEqual(self.driver.current_url, self.live_server_url + '/admin/products/add/')
+         error_message = self.driver.find_element_by_css_selector('.errorlist li').text
+         self.assertEqual(error_message, 'Enter a name.')
+
+     def test_case_030(self):
+         self.driver.get(self.live_server_url + '/admin/')
+         username_input = self.driver.find_element(By.NAME, 'username')
+         username_input.send_keys('admin')
+         password_input = self.driver.find_element(By.NAME, 'password')
+         password_input.send_keys('password')
+         password_input.send_keys(Keys.ENTER)
+
+         self.driver.get(self.live_server_url + '/admin/products/')
+         delete_product_link = self.driver.find_element(By.LINK_TEXT, 'Elimina prodotto')
+         delete_product_link.click()
+
+         # Invia il form
+         save_button = self.driver.find_element(By.NAME, '_save')
+         save_button.click()
+
+         self.assertEqual(self.driver.current_url, self.live_server_url + '/admin/products/delete/')
+
+
+
+     def tearDown(self) -> None:
+         self.driver.close()
+class TestUseCase012(LiveServerTestCase):
+    def setUp(self):
+        self.driver = webdriver.Safari()
+    def test_case_031(self):
+        self.driver.get(self.live_server_url + '/admin/')
+        username_input = self.driver.find_element(By.NAME, 'username')
+        username_input.send_keys('admin')
+        password_input = self.driver.find_element(By.NAME, 'password')
+        password_input.send_keys('password')
+        password_input.send_keys(Keys.ENTER)
+
+        #compiling form to modify the current product field
+        name_input = self.driver.find_element(By.NAME, 'name')
+        name_input.send_keys('Nuovo prodotto')
+        description_input = self.driver.find_element(By.NAME, 'description')
+        description_input.send_keys('Descrizione del nuovo prodotto')
+        price_input = self.driver.find_element(By.NAME, 'price')
+        price_input.send_keys('10.99')
+
+        #Invia il form
+        save_button = self.driver.find_element(By.NAME, '_save')
+        save_button.click()
+
+        product_link = self.driver.find_element(By.LINK_TEXT, 'Nuovo prodotto')
+        self.assertIsNotNone(product_link)
+
+    def tearDown(self) -> None:
+        self.driver.close()
 
 
 

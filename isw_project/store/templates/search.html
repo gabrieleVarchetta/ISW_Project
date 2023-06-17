@@ -8,6 +8,7 @@
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
 
 
@@ -19,6 +20,7 @@
             <button class="header-button-style">Home</button>
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
+
         <form action="/search">
             <div class="input-container">
                 <input name="search_product" placeholder="Search product">
@@ -28,6 +30,7 @@
     </div>
     <div class="content-section">
     <h2> Ciao {{ customer }} </h2>
+    <h3> <span class="text-muted"> Search result for </span> {{request.GET.search_product}}</h3>
         <h2>Products</h2>
         <div class="grid-container">
              {% for product in product_list %}

@@ -78,11 +78,35 @@ class RegistrationView(FormView):
 class CartView(View):
     def get(self, request):
         shopping_cart = ShoppingCart.objects.get(user=request.user)  # Assumi che l'utente sia autenticato
-        cart_product = shopping_cart.get_cart_items()
+        cart_products = shopping_cart.get_cart_items()
 
         context = {
             'cart': shopping_cart,
-            'cart_items': cart_product,
+            'cart_items': cart_products,
         }
 
-        return render(request, 'cart.html', context)
+        return render(request, 'shopping_cart.html', context)
+
+
+class SearchView(ListView):
+    model = Product
+    context_object_name = 'product_list'
+    template_name = 'search.html'
+    paginate_by = 9
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+        return self.render_to_response(context)
+
+    def get_queryset(self):
+        search_product = self.request.GET.get('search_product')
+        queryset = super().get_queryset()
+        if search_product:
+            queryset = queryset.filter(name__icontains=search_product).order_by('id')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['customer'] = Customer.objects.get(user=self.request.user)
+        return context

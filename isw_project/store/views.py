@@ -6,13 +6,11 @@ from django.views.generic import FormView, ListView
 from django.urls import reverse, reverse_lazy
 from .forms import RegisterForm
 from django.contrib.auth.models import User
-from .models import Customer, ResidentialAddress
+from .models import Customer, ResidentialAddress, Product, ShoppingCart
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
-from .models import Product
 from django.views import View
 from django.shortcuts import render
-from .models import ShoppingCart
 
 
 class ProductListView(ListView):
@@ -75,6 +73,8 @@ class RegistrationView(FormView):
         )
 
         return super().form_valid(form)
+
+
 class CartView(View):
     def get(self, request):
         shopping_cart = ShoppingCart.objects.get(user=request.user)  # Assumi che l'utente sia autenticato

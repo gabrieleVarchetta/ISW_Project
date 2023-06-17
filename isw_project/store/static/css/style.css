@@ -1,6 +1,7 @@
 
 /*HEADER*/
 
+
 .header{
     display: flex;
     background-color: white;
@@ -12,6 +13,27 @@
     padding: 10px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 
+}
+
+.input-container{
+    display: flex;
+    align-items: center;
+    align-content: center;
+    padding: 10px;
+    margin: 20px;
+}
+
+input{
+    border-radius: 20px;
+    padding: 15px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    background-color: whitesmoke;
+    width: 140px;
+}
+
+input:hover{
+    width: 200px;
+    transition: 0.2s;
 }
 
 .header-buttons{
@@ -61,9 +83,17 @@
 
 /*Products*/
 
+
 .content-section{
     width: 100vw;
     margin: 20px;
+    margin-left: 30px;
+}
+
+
+a{
+    text-decoration: none;
+    color: black;
 }
 
 .grid-container {
@@ -71,6 +101,7 @@
   grid-template-columns: repeat(3, 1fr); /* Adjust the number of columns as needed */
   grid-gap: 10px; /* Adjust the gap between cards as needed */
     justify-content: space-evenly;
+    margin-bottom: 10px;
 }
 
 .product-card {
@@ -80,7 +111,7 @@
     display: flex;
     flex-direction: row;
     align-content: center;
-    justify-content: center;
+    justify-content: flex-start;
     column-gap: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
@@ -104,7 +135,7 @@
 }
 
 .product-card button:hover{
-    background-color: #5469d2;
+    background-color: whitesmoke;
     transition: 0.2s;
     transform: scale(1.1);
 }
@@ -121,7 +152,6 @@ body{
     margin: 0px;
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 100vh;
     width: 100vw;
     font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
 }
@@ -203,4 +233,7 @@ body{
     background-color: #5469d2;
     transform: scale(1.1);
 }
+
+/*Prova input search*/
+
 

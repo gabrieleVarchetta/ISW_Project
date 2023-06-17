@@ -10,13 +10,16 @@ from .models import Customer, ResidentialAddress
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from .models import Product
+from django.views import View
+from django.shortcuts import render
+from .models import ShoppingCart
 
 
 class ProductListView(ListView):
     model = Product
     context_object_name = 'product_list'
     template_name = 'products.html'
-    paginate_by = 12
+    paginate_by = 9
 
     def get_queryset(self):
         return Product.objects.all().order_by('id')
@@ -72,3 +75,14 @@ class RegistrationView(FormView):
         )
 
         return super().form_valid(form)
+class CartView(View):
+    def get(self, request):
+        shopping_cart = ShoppingCart.objects.get(user=request.user)  # Assumi che l'utente sia autenticato
+        cart_product = shopping_cart.get_cart_items()
+
+        context = {
+            'cart': shopping_cart,
+            'cart_items': cart_product,
+        }
+
+        return render(request, 'cart.html', context)

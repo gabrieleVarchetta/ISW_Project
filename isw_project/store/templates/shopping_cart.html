@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping cart</title>
+</head>
+<body>
+
+    {% block content %}
+      <h1>Shopping cart</h1>
+
+      {% if cart_products %}
+        <ul>
+          {% for item in cart_products %}
+            <li>
+              {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }}
+            </li>
+          {% endfor %}
+        </ul>
+
+        <p>Total: {{ cart.total }}</p>
+
+        <a href="{% url 'checkout' %}">Checkout</a>
+      {% else %}
+        <p>Shopping cart is empty.</p>
+      {% endif %}
+    {% endblock %}
+
+</body>
+</html>

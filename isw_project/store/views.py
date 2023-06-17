@@ -75,14 +75,16 @@ class RegistrationView(FormView):
         )
 
         return super().form_valid(form)
+
+
 class CartView(View):
     def get(self, request):
         shopping_cart = ShoppingCart.objects.get(user=request.user)  # Assumi che l'utente sia autenticato
-        cart_product = shopping_cart.get_cart_items()
+        cart_products = shopping_cart.get_cart_items()
 
         context = {
             'cart': shopping_cart,
-            'cart_items': cart_product,
+            'cart_items': cart_products,
         }
 
-        return render(request, 'cart.html', context)
+        return render(request, 'shopping_cart.html', context)

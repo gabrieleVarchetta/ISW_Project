@@ -1,8 +1,7 @@
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.shortcuts import render, redirect
 from django.views.generic import FormView, ListView
+from django.db.models.functions import Lower
 from django.urls import reverse, reverse_lazy
 from .forms import RegisterForm
 from django.contrib.auth.models import User
@@ -108,5 +107,45 @@ class SearchView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['customer'] = Customer.objects.get(user=self.request.user)
+        return context
+
+
+from django.db.models.functions import Lower
+
+class FilterProductsView(ListView):
+    model = Product
+    context_object_name = 'product_list'
+    template_name = 'products.html'
+    paginate_by = 9
+
+    def get_ordering(self):
+        ordering = self.request.GET.get('order_by')
+
+        if ordering and ordering != 'none':
+            return ordering
+
+        return 'id'  # Ordina per id se nessun parametro di ordinamento è fornito o se è "none"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_product = self.request.GET.get('search_product')
+        filter_category = self.request.GET.get('filter_category')
+
+        if search_product:
+            queryset = queryset.filter(name__icontains=search_product)
+
+        if filter_category:
+            queryset = queryset.filter(category__icontains=filter_category)
+
+        queryset = queryset.order_by(self.get_ordering())
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['order_by'] = self.get_ordering()
+        context['filter_category'] = self.request.GET.get('filter_category')
+        context['categories'] = Product.objects.values_list('category', flat=True).distinct()
         context['customer'] = Customer.objects.get(user=self.request.user)
         return context

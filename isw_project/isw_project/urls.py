@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', views.RegistrationView.as_view(), name='register'),
     path('login/', views.CustomerLoginView.as_view(), name='login'),
-    path('products/', views.ProductListView.as_view(), name='products'),
+    path('products/', views.FilterProductsView.as_view(), name='products'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('search/', views.SearchView.as_view(), name='search'),
     path('shopping_cart/', views.CartView.as_view(), name='shopping_cart')

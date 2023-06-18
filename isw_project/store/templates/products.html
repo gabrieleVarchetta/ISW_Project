@@ -29,18 +29,41 @@
     <div class="content-section">
     <h2> Ciao {{ customer }} </h2>
         <h2>Products</h2>
+        <form id="filter_form" method="GET" action="{% url 'products' %}">
+            <select id="filter_items" name="order_by">
+                <option value="none" {% if order_by == "none" %}selected{% endif %}>None</option>
+                <option value="price" {% if order_by == "price" %}selected{% endif %}>Increasing Price</option>
+                <option value="-price" {% if order_by == "-price" %}selected{% endif %}>Decreasing Price</option>
+                <option value="name" {% if order_by == "name" %}selected{% endif %}>A-Z</option>
+                <option value="-name" {% if order_by == "-name" %}selected{% endif %}>Z-A</option>
+            </select>
+
+            <select id="filter_category" name="filter_category">
+                <option value="" {% if not filter_category %}selected{% endif %}>All</option>
+                {% for category in categories %}
+                    <option value="{{ category }}" {% if filter_category == category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="submit" name="filter_submit" value="Filter">
+        </form>
+
+
         <div class="grid-container">
-             {% for product in product_list %}
-            <div class="product-card">
-                <div>
-                    <h2>{{ product.name }}</h2>
-                    <p>{{ product.description }}</p>
-                    <p style="font-weight: bolder">{{ product.price }}€</p>
-                    <button>Add To Cart</button>
-                </div>
-            </div>
+            {% for product in product_list %}
+                {% if not filter_category or filter_category == "All" or filter_category == product.category %}
+                    <div class="product-card">
+                        <div>
+                            <h2>{{ product.name }}</h2>
+                            <p>{{ product.description }}</p>
+                            <p style="font-weight: bolder">{{ product.price }}€</p>
+                            <button>Add To Cart</button>
+                        </div>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
+
 {% if is_paginated %}
         <div class="pagination">
             <span class="page-links">

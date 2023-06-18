@@ -30,8 +30,9 @@
     </div>
     <div class="content-section">
     <h2> Ciao {{ customer }} </h2>
-    <h3> <span class="text-muted"> Search result for </span> {{request.GET.search_product}}</h3>
+    <h3> <span class="text-muted"> Search result for </span> '{{request.GET.search_product}}'</h3>
         <h2>Products</h2>
+
         <div class="grid-container">
              {% for product in product_list %}
             <div class="product-card">

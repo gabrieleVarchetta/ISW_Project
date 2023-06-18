@@ -22,3 +22,12 @@ class RegisterForm(forms.Form):
     street_address = forms.CharField(max_length=256)
     postal_code = forms.CharField(max_length=256)
     province = forms.CharField(max_length=256)
+
+
+class AddressForm(forms.Form):
+    country = forms.CharField(max_length=100)
+    region = forms.CharField(max_length=100)
+    city = forms.CharField(max_length=100)
+    street_address = forms.CharField(max_length=100)
+    postal_code = forms.CharField(max_length=100)
+    province = forms.CharField(max_length=100)

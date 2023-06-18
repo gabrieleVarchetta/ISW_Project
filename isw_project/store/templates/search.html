@@ -16,8 +16,8 @@
 
     <div class="header">
         <div class="header-buttons">
-            <button class="header-button-style">Cart</button>
-            <button class="header-button-style">Home</button>
+            <button class="header-button-style"><a href="{% url 'shopping_cart' %}">Cart</a>Cart</button>
+            <button class="header-button-style"><a href="{% url 'products' %}">Home</a>Home</button>
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
 
@@ -30,6 +30,8 @@
     </div>
     <div class="content-section">
     <h2> Ciao {{ customer }} </h2>
+
+
     <h3> <span class="text-muted"> Search result for </span> '{{request.GET.search_product}}'</h3>
         <h2>Products</h2>
 
@@ -40,7 +42,7 @@
                     <h2>{{ product.name }}</h2>
                     <p>{{ product.description }}</p>
                     <p style="font-weight: bolder">{{ product.price }}€</p>
-                    <button>Add To Cart</button>
+                    <a href="{% url 'add_to_cart' product.id %}">Add to cart</a>
                 </div>
             </div>
             {% endfor %}

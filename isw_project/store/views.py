@@ -3,13 +3,14 @@ from django.db import transaction
 from django.views.generic import FormView, ListView
 from django.db.models.functions import Lower
 from django.urls import reverse, reverse_lazy
-from .forms import RegisterForm
+from .forms import RegisterForm, AddressForm
 from django.contrib.auth.models import User
-from .models import Customer, ResidentialAddress, Product, ShoppingCart, CartProduct
+from .models import Customer, ResidentialAddress, Product, ShoppingCart, CartProduct, Order, OrderProduct
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.views import View
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 
 
 class ProductListView(ListView):
@@ -152,6 +153,7 @@ class SearchView(ListView):
 
 from django.db.models.functions import Lower
 
+
 class FilterProductsView(ListView):
     model = Product
     context_object_name = 'product_list'
@@ -188,3 +190,32 @@ class FilterProductsView(ListView):
         context['categories'] = Product.objects.values_list('category', flat=True).distinct()
         context['customer'] = Customer.objects.get(user=self.request.user)
         return context
+
+
+class CheckoutView(ListView):
+    template_name = 'checkout.html'
+    model = CartProduct
+    context_object_name = 'cart'
+
+    def get_queryset(self):
+        customer = Customer.objects.get(user=self.request.user)
+        shopping_cart, _ = ShoppingCart.objects.get_or_create(
+            customer=customer)
+
+        return shopping_cart
+
+    def checkout(self, request):
+        customer = Customer.objects.get(user=request.user)
+        shopping_cart = ShoppingCart.objects.get(customer=customer)
+        order = Order.objects.create(customer=customer)
+        cart_products = shopping_cart.get_cart_products()
+
+        for product in cart_products:
+            OrderProduct.objects.create(product=product.id, order=order, quantity=product.quantity)
+
+        order.price = shopping_cart.get_cart_total()
+        order.save()
+
+        for product in shopping_cart:
+            product.delete()
+

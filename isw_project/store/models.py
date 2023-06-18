@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 # Create your models here.
 
 
@@ -15,23 +14,24 @@ class Product(models.Model):
         return f'Product: {self.name}, Price: {self.price}'
 
 
-class Order(models.Model):
-    price = models.FloatField()
-    placed_at = models.DateTimeField(auto_now_add=True)
-
-
-class OrderProduct(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
-
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_day = models.DateField()
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
+
+
+class Order(models.Model):
+    price = models.FloatField()
+    placed_at = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+
+
+class OrderProduct(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
 
 
 class CartProduct(models.Model):

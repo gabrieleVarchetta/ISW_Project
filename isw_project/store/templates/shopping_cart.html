@@ -23,7 +23,7 @@
 
         <p>Total: {{ cart.get_cart_total }}</p>
 
-        <a href="#">Checkout</a>
+        <a href="{% url 'checkout' %}">Checkout</a>
       {% else %}
         <p>Shopping cart is empty.</p>
       {% endif %}

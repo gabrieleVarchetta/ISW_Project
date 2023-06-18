@@ -21,7 +21,7 @@
             <button class="header-button-style">Home</button>
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
-        <form action="/search">
+        <form action="{% url 'search' %}">
             <div class="input-container">
                 <input name="search_product" placeholder="Search product">
                 <button type="submit" class="btn btn-dark">Search</button>
@@ -33,17 +33,17 @@
         <h2>Products</h2>
         <form id="filter_form" method="GET" action="{% url 'products' %}">
             <select id="filter_items" name="order_by">
-                <option value="none" {% if order_by=="none" %}selected{% endif %}>None</option>
-                <option value="price" {% if order_by=="price" %}selected{% endif %}>Increasing Price</option>
-                <option value="-price" {% if order_by=="-price" %}selected{% endif %}>Decreasing Price</option>
-                <option value="name" {% if order_by=="name" %}selected{% endif %}>A-Z</option>
-                <option value="-name" {% if order_by=="-name" %}selected{% endif %}>Z-A</option>
+                <option value="none" {% if order_by == "none" %}selected{% endif %}>None</option>
+                <option value="price" {% if order_by == "price" %}selected{% endif %}>Increasing Price</option>
+                <option value="-price" {% if order_by == "-price" %}selected{% endif %}>Decreasing Price</option>
+                <option value="name" {% if order_by == "name" %}selected{% endif %}>A-Z</option>
+                <option value="-name" {% if order_by == "-name" %}selected{% endif %}>Z-A</option>
             </select>
 
             <select id="filter_category" name="filter_category">
                 <option value="" {% if not filter_category %}selected{% endif %}>All</option>
                 {% for category in categories %}
-                <option value="{{ category }}" {% if filter_category==category %}selected{% endif %}>{{ category }}
+                <option value="{{ category }}" {% if filter_category == category %}selected{% endif %}>{{ category }}
                 </option>
                 {% endfor %}
             </select>

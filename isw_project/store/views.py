@@ -6,7 +6,7 @@ from django.views.generic import FormView, ListView
 from django.urls import reverse, reverse_lazy
 from .forms import RegisterForm
 from django.contrib.auth.models import User
-from .models import Customer, ResidentialAddress, Product, ShoppingCart
+from .models import Customer, ResidentialAddress, Product, ShoppingCart, CartProduct
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.views import View
@@ -76,16 +76,55 @@ class RegistrationView(FormView):
 
 
 class CartView(View):
-    def get(self, request):
-        shopping_cart = ShoppingCart.objects.get(user=request.user)  # Assumi che l'utente sia autenticato
-        cart_products = shopping_cart.get_cart_items()
-
+    @classmethod
+    def product_list(cls, request):
+        customer = Customer.objects.get(user=request.user)
+        shopping_cart, _ = ShoppingCart.objects.get_or_create(
+            customer=customer)  # Assumi che l'utente sia autenticato
         context = {
-            'cart': shopping_cart,
-            'cart_items': cart_products,
+            'cart': shopping_cart
         }
 
         return render(request, 'shopping_cart.html', context)
+
+    @classmethod
+    def add_to_cart(cls, request, product_id):
+        product = Product.objects.get(id=product_id)
+        shopping_cart, _ = ShoppingCart.objects.get_or_create(customer=Customer.objects.get(user=request.user))
+        cart_product, created = CartProduct.objects.get_or_create(shoppingcart=shopping_cart.id, product=product)
+        if not created:
+            cart_product.quantity += 1
+            cart_product.save()
+
+        shopping_cart.products.add(cart_product)
+        messages.info(request, 'Product added to cart!')
+        return redirect(reverse('products'))
+
+    @classmethod
+    def delete_from_cart(cls, request, product_id):
+        product = CartProduct.objects.get(id=product_id)
+        if product:
+            product.delete()
+            messages.info(request, 'Product has been deleted!')
+        return redirect(reverse('shopping_cart'))
+
+    @classmethod
+    def increase_product_quantity(cls, request, product_id):
+        product = CartProduct.objects.get(id=product_id)
+        product.quantity += 1
+        product.save()
+        return redirect(reverse('shopping_cart'))
+
+    @classmethod
+    def decrease_product_quantity(cls, request, product_id):
+        product = CartProduct.objects.get(id=product_id)
+        if product.quantity > 1:
+            product.quantity -= 1
+            product.save()
+        else:
+            cls.delete_from_cart(request, product_id)
+
+        return redirect(reverse('shopping_cart'))
 
 
 class SearchView(ListView):

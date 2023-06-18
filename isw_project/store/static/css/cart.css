@@ -1,0 +1,114 @@
+.cart-product-card{
+    display: flex;
+    align-content: center;
+    align-items:center;
+    column-gap: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 15px;
+    border-radius: 20px;
+    width: 600px;
+    justify-content: space-evenly;
+
+}
+
+.items-cart{
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+*{
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+.qty-button{
+    border-radius: 50%;
+    align-content: center;
+    border: 1px solid black;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+}
+
+.quantity-section{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.product-info{
+    width: 350px;
+    display: flex;
+    column-gap: 15px;
+}
+
+.remove-button{
+    border: 1px solid red;
+    border-radius: 10px;
+    width: 50px;
+    background: none;
+    color: red;
+    padding: 10px;
+    justify-content: center;
+    display: flex;
+}
+
+.remove-button a{
+    color: red;
+}
+
+.remove-button a:hover{
+    color: white;
+    transition: 0.2s;
+}
+
+.remove-button:hover{
+    border: 1px solid red;
+    background: red;
+    color: white;
+    transition: 0.2s;
+
+}
+
+.right{
+    display: flex;
+    column-gap: 20px;
+    align-content: center;
+    justify-content: center;
+    width: 150px;
+}
+
+.bottom-cart{
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.checkout-button{
+    border: 1px solid #098800;
+    border-radius: 10px;
+    width: 60px;
+    background: none;
+    color: #098800;
+    padding: 10px;
+    justify-content: center;
+    display: flex;
+}
+
+.checkout-button:hover{
+    border: 1px solid #098800;
+    background: #098800;
+    color: white;
+    transition: 0.2s;
+}

@@ -23,17 +23,19 @@
         </div>
         <form action="{% url 'search' %}">
             <div class="input-container">
-                <input name="search_product" placeholder="Search product">
-                <button type="submit" class="btn btn-dark">Search</button>
+                <input name="search_product" placeholder="What would you like?" class="styled-search">
+                <button type="submit" class="search-button" >Search</button>
             </div>
         </form>
 
     </div>
     <div class="content-section">
+
         <h2> Ciao {{ customer }} </h2>
         <h2>Products</h2>
+        <div class="filter-section">
         <form id="filter_form" method="GET" action="{% url 'products' %}">
-            <select id="filter_items" name="order_by">
+            <select id="filter_items" name="order_by" class="styled-select">
                 <option value="none" {% if order_by == "none" %}selected{% endif %}>None</option>
                 <option value="price" {% if order_by == "price" %}selected{% endif %}>Increasing Price</option>
                 <option value="-price" {% if order_by == "-price" %}selected{% endif %}>Decreasing Price</option>
@@ -41,7 +43,7 @@
                 <option value="-name" {% if order_by == "-name" %}selected{% endif %}>Z-A</option>
             </select>
 
-            <select id="filter_category" name="filter_category">
+            <select id="filter_category" name="filter_category" class="styled-select">
                 <option value="" {% if not filter_category %}selected{% endif %}>All</option>
                 {% for category in categories %}
                 <option value="{{ category }}" {% if filter_category == category %}selected{% endif %}>{{ category }}
@@ -49,8 +51,10 @@
                 {% endfor %}
             </select>
 
-            <input type="submit" name="filter_submit" value="Filter">
+            <input type="submit" name="filter_submit" value="Filter" class="filter-button">
         </form>
+        </div>
+
 
 
         <div class="grid-container">

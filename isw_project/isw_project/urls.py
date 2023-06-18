@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url
 from store import views
 from django.contrib.auth.views import LogoutView
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +26,9 @@ urlpatterns = [
     path('products/', views.FilterProductsView.as_view(), name='products'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('search/', views.SearchView.as_view(), name='search'),
-    path('shopping_cart/', views.CartView.as_view(), name='shopping_cart')
+    path('shopping_cart/', views.CartView.product_list, name='shopping_cart'),
+    url(r'ˆadd_to_cart/(?P<product_id>[-\w]+)/$', views.CartView.add_to_cart, name='add_to_cart'),
+    url(r'delete_from_cart/(?P<product_id>[-\w]+)/$', views.CartView.delete_from_cart, name='delete_from_cart'),
+    url(r'increase_product_quantity/(?P<product_id>[-\w]+)/$', views.CartView.increase_product_quantity, name='increase_product_quantity'),
+    url(r'decrease_product_quantity/(?P<product_id>[-\w]+)/$', views.CartView.decrease_product_quantity, name='decrease_product_quantity')
 ]

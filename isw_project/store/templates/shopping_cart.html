@@ -8,19 +8,22 @@
 
     {% block content %}
       <h1>Shopping cart</h1>
-
-      {% if cart_products %}
+        <a href="{% url 'products' %}">Go to the products list</a>
+      {% if cart.get_cart_products %}
         <ul>
-          {% for item in cart_products %}
+          {% for item in cart.get_cart_products %}
             <li>
               {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }}
+            <a href="{% url 'delete_from_cart' item.id %}">Remove</a>
+            <a href="{% url 'increase_product_quantity' item.id %}">Increase quantity</a>
+            <a href="{% url 'decrease_product_quantity' item.id %}">Decrease quantity</a>
             </li>
           {% endfor %}
         </ul>
 
-        <p>Total: {{ cart.total }}</p>
+        <p>Total: {{ cart.get_cart_total }}</p>
 
-        <a href="{% url 'checkout' %}">Checkout</a>
+        <a href="#">Checkout</a>
       {% else %}
         <p>Shopping cart is empty.</p>
       {% endif %}

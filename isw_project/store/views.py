@@ -12,7 +12,6 @@ from django.views import View
 from django.shortcuts import render, redirect
 
 
-
 class ProductListView(ListView):
     model = Product
     context_object_name = 'product_list'
@@ -150,6 +149,10 @@ class SearchView(ListView):
         context['customer'] = Customer.objects.get(user=self.request.user)
         return context
 
+
+from django.db.models.functions import Lower
+
+
 class FilterProductsView(ListView):
     model = Product
     context_object_name = 'product_list'
@@ -188,30 +191,39 @@ class FilterProductsView(ListView):
         return context
 
 
-class CheckoutView(ListView):
-    template_name = 'checkout.html'
-    model = CartProduct
-    context_object_name = 'cart'
-
-    def get_queryset(self):
-        customer = Customer.objects.get(user=self.request.user)
-        shopping_cart, _ = ShoppingCart.objects.get_or_create(
-            customer=customer)
-
-        return shopping_cart
-
-    def checkout(self, request):
+class CheckoutView(View):
+    @classmethod
+    def summary(cls, request):
         customer = Customer.objects.get(user=request.user)
         shopping_cart = ShoppingCart.objects.get(customer=customer)
-        order = Order.objects.create(customer=customer)
-        cart_products = shopping_cart.get_cart_products()
+        order, _ = Order.objects.get_or_create(customer=customer, pending=True)
 
-        for product in cart_products:
-            OrderProduct.objects.create(product=product.id, order=order, quantity=product.quantity)
+        for product in shopping_cart.get_cart_products():
+            quantity = product.quantity
+            product = Product.objects.get(id=product.product.id)
+            OrderProduct.objects.create(product=product, order=order, quantity=quantity)
 
         order.price = shopping_cart.get_cart_total()
         order.save()
 
-        for product in shopping_cart:
+        context = {
+            'product_list': shopping_cart.get_cart_products(),
+            'total': order.price
+        }
+
+        return render(request, 'checkout.html', context)
+
+    @classmethod
+    def checkout(cls, request):
+        customer = Customer.objects.get(user=request.user)
+        order, _ = Order.objects.get_or_create(customer=customer, pending=True)
+        shopping_cart = ShoppingCart.objects.get(customer=customer)
+
+        for product in shopping_cart.get_cart_products():
             product.delete()
 
+        order.pending = True
+        order.save()
+        messages.info(request, 'Order completed successfully')
+
+        return redirect(reverse('products'))

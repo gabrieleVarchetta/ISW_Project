@@ -23,14 +23,15 @@ class Customer(models.Model):
 
 
 class Order(models.Model):
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     placed_at = models.DateTimeField(auto_now_add=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    pending = models.BooleanField(default=True)
 
 
 class OrderProduct(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
 

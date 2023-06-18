@@ -150,10 +150,6 @@ class SearchView(ListView):
         context['customer'] = Customer.objects.get(user=self.request.user)
         return context
 
-
-from django.db.models.functions import Lower
-
-
 class FilterProductsView(ListView):
     model = Product
     context_object_name = 'product_list'

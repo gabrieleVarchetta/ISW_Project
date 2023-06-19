@@ -8,9 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/isw_project/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/isw_project/isw_project/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/isw_project/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/isw_project/store/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/store/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/isw_project/store/templates/checkout.html" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/store/templates/checkout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/isw_project/store/templates/shopping_cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/store/templates/shopping_cart.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/isw_project/store/templates/products.html" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/store/templates/products.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/isw_project/store/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/isw_project/store/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,6 +64,7 @@
       <workItem from="1686992586255" duration="7075000" />
       <workItem from="1687070594227" duration="9895000" />
       <workItem from="1687101046507" duration="2299000" />
+      <workItem from="1687204059162" duration="3326000" />
     </task>
     <servers />
   </component>

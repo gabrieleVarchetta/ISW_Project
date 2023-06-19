@@ -25,7 +25,6 @@ urlpatterns = [
     path('login/', views.CustomerLoginView.as_view(), name='login'),
     path('products/', views.FilterProductsView.as_view(), name='products'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
-    path('search/', views.FilterProductsView.as_view(), name='search'),
     path('shopping_cart/', views.CartView.product_list, name='shopping_cart'),
     path('order_summary/', views.CheckoutView.summary, name='order_summary'),
     path('checkout/', views.CheckoutView.checkout, name='checkout'),

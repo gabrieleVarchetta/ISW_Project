@@ -21,14 +21,17 @@
             <button class="header-button-style">Home</button>
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
-        <form action="{% url 'search' %}">
+        <form action="{% url 'products' %}" method="GET">
             <div class="input-container">
                 <input name="search_product" placeholder="What would you like?" class="styled-search">
-                <button type="submit" class="search-button" >Search</button>
+                <input type="hidden" name="order_by" value="{{ order_by }}">
+                <input type="hidden" name="filter_category" value="{{ filter_category }}">
+                <input type="submit" value="Search" class="search-button">
             </div>
         </form>
 
     </div>
+
     <div class="content-section">
 
         <h2> Ciao {{ customer }} </h2>
@@ -58,19 +61,22 @@
 
 
         <div class="grid-container">
-            {% for product in product_list %}
-            {% if not filter_category or filter_category == "All" or filter_category == product.category %}
-            <div class="product-card">
-                <div>
-                    <h2>{{ product.name }}</h2>
-                    <p>{{ product.description }}</p>
-                    <p style="font-weight: bolder">{{ product.price }}€</p>
-                    <a href="{% url 'add_to_cart' product.id %}">Add to cart</a>
-                </div>
-            </div>
+            {% if filtered_product_list %}
+                {% for product in filtered_product_list %}
+                    <div class="product-card">
+                        <div>
+                            <h2>{{ product.name }}</h2>
+                            <p>{{ product.description }}</p>
+                            <p style="font-weight: bolder">{{ product.price }}€</p>
+                            <a href="{% url 'add_to_cart' product.id %}">Add to cart</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No products found.</p>
             {% endif %}
-            {% endfor %}
         </div>
+
 
 {% if is_paginated %}
     <div class="pagination">

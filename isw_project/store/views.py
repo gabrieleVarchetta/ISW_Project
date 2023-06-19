@@ -126,68 +126,46 @@ class CartView(View):
         return redirect(reverse('shopping_cart'))
 
 
-class SearchView(ListView):
-    model = Product
-    context_object_name = 'product_list'
-    template_name = 'search.html'
-    paginate_by = 9
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
-        return self.render_to_response(context)
-
-    def get_queryset(self):
-        search_product = self.request.GET.get('search_product')
-        queryset = super().get_queryset()
-        if search_product:
-            queryset = queryset.filter(name__icontains=search_product).order_by('id')
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['customer'] = Customer.objects.get(user=self.request.user)
-        return context
-
-
-from django.db.models.functions import Lower
-
-
 class FilterProductsView(ListView):
     model = Product
-    context_object_name = 'product_list'
     template_name = 'products.html'
-    paginate_by = 9
-
-    def get_ordering(self):
-        ordering = self.request.GET.get('order_by')
-
-        if ordering and ordering != 'none':
-            return ordering
-
-        return 'id'  # Ordina per id se nessun parametro di ordinamento è fornito o se è "none"
+    context_object_name = 'product_list'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search_product = self.request.GET.get('search_product')
-        filter_category = self.request.GET.get('filter_category')
 
+        # Ricerca per nome del prodotto
+        search_product = self.request.GET.get('search_product')
         if search_product:
             queryset = queryset.filter(name__icontains=search_product)
 
+        # Filtri
+        filter_category = self.request.GET.get('filter_category')
+        order_by = self.request.GET.get('order_by')
+
         if filter_category:
-            queryset = queryset.filter(category__icontains=filter_category)
+            queryset = queryset.filter(category=filter_category)
 
-        queryset = queryset.order_by(self.get_ordering())
+        if order_by and order_by != 'none':
+            queryset = queryset.order_by(order_by)
 
-        return queryset
+        return queryset.distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['order_by'] = self.get_ordering()
+
+        # Passa i parametri di ricerca e filtro al template
+        context['search_product'] = self.request.GET.get('search_product')
         context['filter_category'] = self.request.GET.get('filter_category')
+        context['order_by'] = self.request.GET.get('order_by')
+
+        # Recupera le categorie dei prodotti
         context['categories'] = Product.objects.values_list('category', flat=True).distinct()
-        context['customer'] = Customer.objects.get(user=self.request.user)
+
+        # Recupera i risultati filtrati
+        context['filtered_product_list'] = self.get_queryset()
+
         return context
 
 

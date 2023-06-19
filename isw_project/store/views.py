@@ -135,20 +135,24 @@ class FilterProductsView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        # Ricerca per nome del prodotto
         search_product = self.request.GET.get('search_product')
         if search_product:
             queryset = queryset.filter(name__icontains=search_product)
 
-        # Filtri
         filter_category = self.request.GET.get('filter_category')
-        order_by = self.request.GET.get('order_by')
-
-        if filter_category:
+        if filter_category and filter_category != 'None':
             queryset = queryset.filter(category=filter_category)
 
-        if order_by and order_by != 'none':
-            queryset = queryset.order_by(order_by)
+        order_by = self.request.GET.get('order_by')
+        if order_by and order_by != 'None':
+            if order_by == 'price':
+                queryset = queryset.order_by('price')
+            elif order_by == '-price':
+                queryset = queryset.order_by('-price')
+            elif order_by == 'name':
+                queryset = queryset.order_by(Lower('name'))
+            elif order_by == '-name':
+                queryset = queryset.order_by(Lower('name')).reverse()
 
         return queryset.distinct()
 

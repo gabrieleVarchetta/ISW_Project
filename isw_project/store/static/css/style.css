@@ -231,6 +231,30 @@ body{
     font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
 }
 
+/*Page*/
+
+.pagination-buttons{
+    width: 250px;
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.navigation-buttons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+}
+
+.nav-container{
+    display: flex;
+    justify-content: center;
+}
+
 
 
 /* Buttons Login*/

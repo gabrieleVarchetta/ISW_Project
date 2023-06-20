@@ -1,32 +1,50 @@
-{% load crispy_forms_filters %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cart.css' %}">
+
 </head>
 <body>
-    <h1>Checkout</h1>
 
-    <form method="post">
-      {% csrf_token %}
 
-      {{ form.as_p }}
-        {% if cart.get_cart_products %}
-        <ul>
-          {% for item in cart.get_cart_products %}
-            <li>
-              {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }}
-            </li>
-          {% endfor %}
-        </ul>
+        {% if product_list %}
+            <div class="checkout-pagination">
+            <div class="checkout-buttons-container">
+                <a href="{% url 'products' %}" class="generic-button">Back to product list</a>
+                <a href="{% url 'shopping_cart' %}" class="generic-button">Back to cart</a>
+                <a href="{% url 'checkout' %}" class="checkout-button">Checkout</a>
+            </div>
+            <div class="checkout">
+                <div class="order-summary">
+                <h3>Order Summary</h3>
 
-        <p>Total: {{ cart.get_cart_total }}</p>
-      {% else %}
-        <p>Shopping cart is empty.</p>
+                    {% for item in product_list %}
+                        <p>
+                          {{ item.product.name }} <br>{{ item.quantity }} x {{ item.product.price }}€
+                        </p>
+                    {% endfor %}
+
+                    <h3>Total: {{ total }}€</h3>
+                </div>
+
+                <div class="payment-details">
+                <h3>Payment Details</h3>
+                </div>
+
+                <div class="payment-details">
+                <h3>Shipping details</h3>
+                </div>
+            </div>
+            </div>
+
+
       {% endif %}
 
-    <button class="header-button-style"><a href="{% url 'shopping_cart' %}">Cart</a></button>
-    </form>
+
+
 </body>
 </html>

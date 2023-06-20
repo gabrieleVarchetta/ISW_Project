@@ -1,31 +1,57 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Shopping cart</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cart.css' %}">
 </head>
 <body>
 
     {% block content %}
-      <h1>Shopping cart</h1>
-        <a href="{% url 'products' %}">Go to the products list</a>
+
       {% if cart.get_cart_products %}
-        <ul>
-          {% for item in cart.get_cart_products %}
-            <li>
-              {{ item.product.name }} - {{ item.quantity }} x {{ item.product.price }}
-            <a href="{% url 'delete_from_cart' item.id %}">Remove</a>
-            <a href="{% url 'increase_product_quantity' item.id %}">Increase quantity</a>
-            <a href="{% url 'decrease_product_quantity' item.id %}">Decrease quantity</a>
-            </li>
+        <div class="items-cart">
+          <h1>Shopping cart</h1>
+        <a href="{% url 'products' %}">Go to the products list</a>
+        {% for item in cart.get_cart_products %}
+            <div class="cart-product-card">
+                <div class="product-info">
+                    <h4>{{ item.product.name }}</h4>
+                    <h4>{{ item.product.price }}€</h4>
+                </div>
+
+                <div class="right" >
+                   <div class="quantity-section">
+                       <a href="{% url 'increase_product_quantity' item.id %}" class="qty-button" >+</a>
+                        {{ item.quantity }}
+                        <a href="{% url 'decrease_product_quantity' item.id %}" class="qty-button">-</a>
+                        <a href="{% url 'delete_from_cart' item.id %}" class="remove-button" >Remove</a>
+                </div>
+
+                </div>
+            </div>
+
+
+
+
           {% endfor %}
-        </ul>
 
-        <p>Total: {{ cart.get_cart_total }}</p>
 
-        <a href="{% url 'checkout' %}">Checkout</a>
+
+<div class="bottom-cart">
+<p style="font-weight: bolder">Total: {{ cart.get_cart_total }}€</p>
+
+        <a href="{% url 'order_summary' %}" class="checkout-button">Order Summary</a>
+</div>
+
       {% else %}
-        <p>Shopping cart is empty.</p>
+          <div class="items-cart">
+          <p>Shopping cart is empty.</p>
+          <a href="{% url 'products' %}">Back home</a>
+          </div>
+
       {% endif %}
     {% endblock %}
 

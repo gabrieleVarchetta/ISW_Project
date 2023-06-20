@@ -21,9 +21,12 @@
     align-content: center;
     padding: 10px;
     margin: 20px;
+    column-gap: 10px;
+    width: 300px;
+    height: 70px;
 }
 
-input{
+.styled-search{
     border-radius: 20px;
     padding: 15px;
         box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -31,7 +34,7 @@ input{
     width: 140px;
 }
 
-input:hover{
+.styled-search:hover{
     width: 200px;
     transition: 0.2s;
 }
@@ -83,6 +86,43 @@ input:hover{
 
 /*Products*/
 
+.styled-select{
+    background: none;
+    border-radius: 15px;
+    border: 1px solid black;
+    padding: 8px;
+
+}
+
+.filter-section{
+    display: flex;
+    margin-bottom: 20px;
+    column-gap: 5px;
+}
+
+.filter-button{
+    background:none;
+    color: black;
+    padding: 10px;
+    font-weight: bolder;
+    border: 1px solid black;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.search-button{
+    background:none;
+    color: black;
+    font-weight: bolder;
+    cursor: pointer;
+    font-size: small;
+    border: none;
+}
+
+.filter-button:hover{
+    background-color: #ececec;
+    transition: 0.1s;
+}
 
 .content-section{
     width: 100vw;

@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,84 +10,81 @@
 </head>
 
 <body>
-
-
-    {% if product_list %}
-
     <div class="header">
         <div class="header-buttons">
             <button class="header-button-style"><a href="{% url 'shopping_cart' %}">Cart</a></button>
-            <button class="header-button-style">Home</button>
+            <button class="header-button-style"><a href="{% url 'products' %}">Home</a></button>
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
-        <form action="{% url 'search' %}">
+        <form action="{% url 'products' %}" method="GET">
             <div class="input-container">
-                <input name="search_product" placeholder="Search product">
-                <button type="submit" class="btn btn-dark">Search</button>
+                <input name="search_product" placeholder="What would you like?" class="styled-search" value="{% if search_product %}{{ search_product }}{% endif %}">
+                <input type="hidden" name="order_by" value="{{ order_by }}">
+                <input type="hidden" name="filter_category" value="{{ filter_category }}">
+                <input type="submit" value="Search" class="search-button">
             </div>
         </form>
     </div>
+
     <div class="content-section">
         <h2> Ciao {{ customer }} </h2>
-        <h2>Products</h2>
-        <form id="filter_form" method="GET" action="{% url 'products' %}">
-            <select id="filter_items" name="order_by">
-                <option value="none" {% if order_by == "none" %}selected{% endif %}>None</option>
-                <option value="price" {% if order_by == "price" %}selected{% endif %}>Increasing Price</option>
-                <option value="-price" {% if order_by == "-price" %}selected{% endif %}>Decreasing Price</option>
-                <option value="name" {% if order_by == "name" %}selected{% endif %}>A-Z</option>
-                <option value="-name" {% if order_by == "-name" %}selected{% endif %}>Z-A</option>
-            </select>
+        <h2{% if request.GET.search_product %} style="display: none;"{% endif %}>Products</h2>
+        <h3{% if not request.GET.search_product %} style="display: none;"{% endif %}><span class="text-muted">Search result for</span> '{{ request.GET.search_product }}'</h3>
 
-            <select id="filter_category" name="filter_category">
-                <option value="" {% if not filter_category %}selected{% endif %}>All</option>
-                {% for category in categories %}
-                <option value="{{ category }}" {% if filter_category == category %}selected{% endif %}>{{ category }}
-                </option>
-                {% endfor %}
-            </select>
+        <div class="filter-section">
+            <form id="filter_form" method="GET" action="{% url 'products' %}">
+                <select id="filter_items" name="order_by" class="styled-select">
+                    <option value="none" {% if order_by == "none" %}selected{% endif %}>None</option>
+                    <option value="price" {% if order_by == "price" %}selected{% endif %}>Increasing Price</option>
+                    <option value="-price" {% if order_by == "-price" %}selected{% endif %}>Decreasing Price</option>
+                    <option value="name" {% if order_by == "name" %}selected{% endif %}>A-Z</option>
+                    <option value="-name" {% if order_by == "-name" %}selected{% endif %}>Z-A</option>
+                </select>
 
-            <input type="submit" name="filter_submit" value="Filter">
-        </form>
+                <select id="filter_category" name="filter_category" class="styled-select">
+                    <option value="" {% if not filter_category %}selected{% endif %}>All</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}" {% if filter_category == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
 
+                <input type="submit" name="filter_submit" value="Filter" class="filter-button">
+            </form>
+        </div>
 
         <div class="grid-container">
-            {% for product in product_list %}
-            {% if not filter_category or filter_category == "All" or filter_category == product.category %}
-            <div class="product-card">
-                <div>
-                    <h2>{{ product.name }}</h2>
-                    <p>{{ product.description }}</p>
-                    <p style="font-weight: bolder">{{ product.price }}€</p>
-                    <a href="{% url 'add_to_cart' product.id %}">Add to cart</a>
-                </div>
-            </div>
+            {% if filtered_product_list %}
+                {% for product in filtered_product_list %}
+                    <div class="product-card">
+                        <div>
+                            <h2>{{ product.name }}</h2>
+                            <p>{{ product.description }}</p>
+                            <p style="font-weight: bolder">{{ product.price }}€</p>
+                            <a href="{% url 'add_to_cart' product.id %}">Add to cart</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No products found.</p>
             {% endif %}
-            {% endfor %}
         </div>
 
         {% if is_paginated %}
-        <div class="pagination">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
-                <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}{% if order_by %}&order_by={{ order_by }}{% endif %}{% if filter_category %}&filter_category={{ filter_category }}{% endif %}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}{% if order_by %}&order_by={{ order_by }}{% endif %}{% if filter_category %}&filter_category={{ filter_category }}{% endif %}">next</a>
+                    {% endif %}
                 </span>
-                {% if page_obj.has_next %}
-                <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-                {% endif %}
-            </span>
-        </div>
-        {% endif %}
-        {% else %}
-        <p>There are no products in the library.</p>
+            </div>
         {% endif %}
     </div>
-
-
-
 </body>
 
 </html>

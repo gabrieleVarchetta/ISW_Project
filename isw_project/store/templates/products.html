@@ -28,8 +28,8 @@
 
     <div class="content-section">
         <h2> Ciao {{  customer }} </h2>
-        <h2{% if request.GET.search_product %} style="display: none;"{% endif %}>Products</h2>
-        <h3{% if not request.GET.search_product %} style="display: none;"{% endif %}><span class="text-muted">Search result for</span> '{{ request.GET.search_product }}'</h3>
+        <h2 {% if request.GET.search_product %} style="display: none;"{% endif %}>Products</h2>
+        <h3 {% if not request.GET.search_product %} style="display: none;"{% endif %}><span class="text-muted">Search result for</span> '{{ request.GET.search_product }}'</h3>
 
         <div class="filter-section">
             <form id="filter_form" method="GET" action="{% url 'products' %}">
@@ -53,8 +53,8 @@
         </div>
 
         <div class="grid-container">
-            {% if filtered_product_list %}
-                {% for product in filtered_product_list %}
+            {% if product_list %}
+                {% for product in product_list %}
                     <div class="product-card">
                         <div>
                             <h2>{{ product.name }}</h2>

@@ -12,7 +12,6 @@ from django.views import View
 from django.shortcuts import render, redirect
 
 
-
 class ProductListView(ListView):
     model = Product
     context_object_name = 'product_list'
@@ -127,95 +126,86 @@ class CartView(View):
         return redirect(reverse('shopping_cart'))
 
 
-class SearchView(ListView):
-    model = Product
-    context_object_name = 'product_list'
-    template_name = 'search.html'
-    paginate_by = 9
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
-        return self.render_to_response(context)
-
-    def get_queryset(self):
-        search_product = self.request.GET.get('search_product')
-        queryset = super().get_queryset()
-        if search_product:
-            queryset = queryset.filter(name__icontains=search_product).order_by('id')
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['customer'] = Customer.objects.get(user=self.request.user)
-        return context
-
-
-from django.db.models.functions import Lower
-
-
 class FilterProductsView(ListView):
     model = Product
-    context_object_name = 'product_list'
     template_name = 'products.html'
-    paginate_by = 9
-
-    def get_ordering(self):
-        ordering = self.request.GET.get('order_by')
-
-        if ordering and ordering != 'none':
-            return ordering
-
-        return 'id'  # Ordina per id se nessun parametro di ordinamento è fornito o se è "none"
+    context_object_name = 'product_list'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search_product = self.request.GET.get('search_product')
-        filter_category = self.request.GET.get('filter_category')
 
+        search_product = self.request.GET.get('search_product')
         if search_product:
             queryset = queryset.filter(name__icontains=search_product)
 
-        if filter_category:
-            queryset = queryset.filter(category__icontains=filter_category)
+        filter_category = self.request.GET.get('filter_category')
+        if filter_category and filter_category != 'None':
+            queryset = queryset.filter(category=filter_category)
 
-        queryset = queryset.order_by(self.get_ordering())
+        order_by = self.request.GET.get('order_by')
+        if order_by and order_by != 'None':
+            if order_by == 'price':
+                queryset = queryset.order_by('price')
+            elif order_by == '-price':
+                queryset = queryset.order_by('-price')
+            elif order_by == 'name':
+                queryset = queryset.order_by(Lower('name'))
+            elif order_by == '-name':
+                queryset = queryset.order_by(Lower('name')).reverse()
 
-        return queryset
+        return queryset.distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['order_by'] = self.get_ordering()
+
+        # Passa i parametri di ricerca e filtro al template
+        context['search_product'] = self.request.GET.get('search_product')
         context['filter_category'] = self.request.GET.get('filter_category')
+        context['order_by'] = self.request.GET.get('order_by')
+
+        # Recupera le categorie dei prodotti
         context['categories'] = Product.objects.values_list('category', flat=True).distinct()
-        context['customer'] = Customer.objects.get(user=self.request.user)
+
+        # Recupera i risultati filtrati
+        context['filtered_product_list'] = self.get_queryset()
+
         return context
 
 
-class CheckoutView(ListView):
-    template_name = 'checkout.html'
-    model = CartProduct
-    context_object_name = 'cart'
-
-    def get_queryset(self):
-        customer = Customer.objects.get(user=self.request.user)
-        shopping_cart, _ = ShoppingCart.objects.get_or_create(
-            customer=customer)
-
-        return shopping_cart
-
-    def checkout(self, request):
+class CheckoutView(View):
+    @classmethod
+    def summary(cls, request):
         customer = Customer.objects.get(user=request.user)
         shopping_cart = ShoppingCart.objects.get(customer=customer)
-        order = Order.objects.create(customer=customer)
-        cart_products = shopping_cart.get_cart_products()
+        order, _ = Order.objects.get_or_create(customer=customer, pending=True)
 
-        for product in cart_products:
-            OrderProduct.objects.create(product=product.id, order=order, quantity=product.quantity)
+        for product in shopping_cart.get_cart_products():
+            quantity = product.quantity
+            product = Product.objects.get(id=product.product.id)
+            OrderProduct.objects.create(product=product, order=order, quantity=quantity)
 
         order.price = shopping_cart.get_cart_total()
         order.save()
 
-        for product in shopping_cart:
+        context = {
+            'product_list': shopping_cart.get_cart_products(),
+            'total': order.price
+        }
+
+        return render(request, 'checkout.html', context)
+
+    @classmethod
+    def checkout(cls, request):
+        customer = Customer.objects.get(user=request.user)
+        order, _ = Order.objects.get_or_create(customer=customer, pending=True)
+        shopping_cart = ShoppingCart.objects.get(customer=customer)
+
+        for product in shopping_cart.get_cart_products():
             product.delete()
 
+        order.pending = True
+        order.save()
+        messages.info(request, 'Order completed successfully')
+
+        return redirect(reverse('products'))

@@ -1,3 +1,4 @@
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -22,11 +23,25 @@ class Customer(models.Model):
         return f'{self.user.first_name} {self.user.last_name}'
 
 
+class PaymentMethod(models.Model):
+    card_number = models.CharField(max_length=16, validators=[MinLengthValidator(16)])
+    cardholder_name = models.CharField(max_length=100)
+    expiration_month = models.IntegerField()
+    expiration_year = models.IntegerField()
+    cvv = models.CharField(max_length=4)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    default_payment_method = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{"*"*12}{self.card_number[12:]}'
+
+
 class Order(models.Model):
     price = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     placed_at = models.DateTimeField(auto_now_add=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     pending = models.BooleanField(default=True)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
 
 
 class OrderProduct(models.Model):
@@ -69,6 +84,7 @@ class Address(models.Model):
 
 class ShippingAddress(Address):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    default_shipping_address = models.BooleanField(default=False)
 
 
 class ResidentialAddress(Address):

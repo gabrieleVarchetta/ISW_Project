@@ -3,10 +3,10 @@ from django.db import transaction
 from django.views.generic import FormView, ListView
 from django.db.models.functions import Lower
 from django.urls import reverse, reverse_lazy
-from .forms import RegisterForm, AddressForm
+from .forms import RegisterForm, AddressForm, PaymentMethodForm
 from django.contrib.auth.models import User
 from .models import Customer, ResidentialAddress, Product, ShoppingCart, CartProduct, Order, OrderProduct, \
-    ShippingAddress
+    ShippingAddress, PaymentMethod
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.views import View
@@ -61,6 +61,15 @@ class RegistrationView(FormView):
             province=form.cleaned_data['province'],
             customer=customer,
             default_shipping_address=True
+        )
+        PaymentMethod.objects.create(
+            card_number=form.cleaned_data['card_number'],
+            cardholder_name=form.cleaned_data['cardholder_name'],
+            expiration_month=form.cleaned_data['expiration_month'],
+            expiration_year=form.cleaned_data['expiration_year'],
+            cvv=form.cleaned_data['cvv'],
+            customer=customer,
+            default_payment_method=True
         )
 
         return super().form_valid(form)
@@ -136,7 +145,7 @@ class FilterProductsView(ListView):
             queryset = queryset.filter(category=filter_category)
 
         order_by = self.request.GET.get('order_by')
-        if order_by and order_by != 'None':
+        if order_by and order_by != 'none':
             if 'name' in order_by:
                 if order_by.startswith('-'):
                     queryset = queryset.order_by(Lower('name')).reverse()
@@ -173,6 +182,7 @@ class CheckoutView(View):
         order, _ = Order.objects.get_or_create(customer=customer, pending=True)
         customer_residential_address = ResidentialAddress.objects.get(customer=customer)
         customer_shipping_addresses = ShippingAddress.objects.filter(customer=customer)
+        customer_payment_methods = PaymentMethod.objects.filter(customer=customer)
 
         for product in shopping_cart.get_cart_products():
             quantity = product.quantity
@@ -185,9 +195,11 @@ class CheckoutView(View):
         context = {
             'product_list': shopping_cart.get_cart_products(),
             'total': order.price,
-            'form': AddressForm(),
+            'address_form': AddressForm(),
+            'payment_method_form': PaymentMethodForm(),
             'residential_address': customer_residential_address,
             'shipping_addresses': customer_shipping_addresses,
+            'payment_methods': customer_payment_methods
         }
 
         return render(request, 'checkout.html', context)
@@ -196,15 +208,19 @@ class CheckoutView(View):
     def checkout(cls, request):
         customer = Customer.objects.get(user=request.user)
         default_shipping_address = ShippingAddress.objects.get(customer=customer, default_shipping_address=True)
+        default_payment_method = PaymentMethod.objects.get(customer=customer, default_payment_method=True)
         shipping_address_id = request.POST.get('shipping_address')
+        payment_method_id = request.POST.get('payment_method')
         order, _ = Order.objects.get_or_create(customer=customer, pending=True)
 
-        if shipping_address_id:
+        if shipping_address_id and payment_method_id:
             shipping_address = ShippingAddress.objects.get(customer=customer, id=shipping_address_id)
+            payment_method = PaymentMethod.objects.get(customer=customer, id=payment_method_id)
             order.shipping_address = shipping_address
-            order.save()
+            order.payment_method = payment_method
         else:
             order.shipping_address = default_shipping_address
+            order.payment_method = default_payment_method
 
         shopping_cart = ShoppingCart.objects.get(customer=customer)
 
@@ -231,6 +247,24 @@ class CheckoutView(View):
                     street_address=form.cleaned_data['street_address'],
                     postal_code=form.cleaned_data['postal_code'],
                     province=form.cleaned_data['province'],
+                    customer=customer
+                )
+
+        return redirect(reverse('order_summary'))
+
+    @classmethod
+    def add_payment_method(cls, request):
+        customer = Customer.objects.get(user=request.user)
+
+        if request.method == 'POST':
+            form = PaymentMethodForm(request.POST)
+            if form.is_valid():
+                PaymentMethod.objects.get_or_create(
+                    card_number=form.cleaned_data['card_number'],
+                    cardholder_name=form.cleaned_data['cardholder_name'],
+                    expiration_month=form.cleaned_data['expiration_month'],
+                    expiration_year=form.cleaned_data['expiration_year'],
+                    cvv=form.cleaned_data['cvv'],
                     customer=customer
                 )
 

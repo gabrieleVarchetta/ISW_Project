@@ -5,26 +5,12 @@ from django.db.models.functions import Lower
 from django.urls import reverse, reverse_lazy
 from .forms import RegisterForm, AddressForm
 from django.contrib.auth.models import User
-from .models import Customer, ResidentialAddress, Product, ShoppingCart, CartProduct, Order, OrderProduct
+from .models import Customer, ResidentialAddress, Product, ShoppingCart, CartProduct, Order, OrderProduct, \
+    ShippingAddress
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.views import View
 from django.shortcuts import render, redirect
-
-
-class ProductListView(ListView):
-    model = Product
-    context_object_name = 'product_list'
-    template_name = 'products.html'
-    paginate_by = 9
-
-    def get_queryset(self):
-        return Product.objects.all().order_by('id')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['customer'] = Customer.objects.get(user=self.request.user)
-        return context
 
 
 class CustomerLoginView(LoginView):
@@ -32,10 +18,6 @@ class CustomerLoginView(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('products')
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Invalid username or password.')
-        return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -69,6 +51,16 @@ class RegistrationView(FormView):
             postal_code=form.cleaned_data['postal_code'],
             province=form.cleaned_data['province'],
             customer=customer
+        )
+        ShippingAddress.objects.create(
+            country=form.cleaned_data['country'],
+            region=form.cleaned_data['region'],
+            city=form.cleaned_data['city'],
+            street_address=form.cleaned_data['street_address'],
+            postal_code=form.cleaned_data['postal_code'],
+            province=form.cleaned_data['province'],
+            customer=customer,
+            default_shipping_address=True
         )
 
         return super().form_valid(form)
@@ -130,7 +122,7 @@ class FilterProductsView(ListView):
     model = Product
     template_name = 'products.html'
     context_object_name = 'product_list'
-    paginate_by = 10
+    paginate_by = 9
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -145,16 +137,15 @@ class FilterProductsView(ListView):
 
         order_by = self.request.GET.get('order_by')
         if order_by and order_by != 'None':
-            if order_by == 'price':
-                queryset = queryset.order_by('price')
-            elif order_by == '-price':
-                queryset = queryset.order_by('-price')
-            elif order_by == 'name':
-                queryset = queryset.order_by(Lower('name'))
-            elif order_by == '-name':
-                queryset = queryset.order_by(Lower('name')).reverse()
+            if 'name' in order_by:
+                if order_by.startswith('-'):
+                    queryset = queryset.order_by(Lower('name')).reverse()
+                else:
+                    queryset = queryset.order_by(Lower('name'))
+            else:
+                queryset = queryset.order_by(order_by)
 
-        return queryset.distinct()
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -170,6 +161,7 @@ class FilterProductsView(ListView):
         # Recupera i risultati filtrati
         context['filtered_product_list'] = self.get_queryset()
 
+        context['customer'] = Customer.objects.get(user=self.request.user)
         return context
 
 
@@ -179,6 +171,8 @@ class CheckoutView(View):
         customer = Customer.objects.get(user=request.user)
         shopping_cart = ShoppingCart.objects.get(customer=customer)
         order, _ = Order.objects.get_or_create(customer=customer, pending=True)
+        customer_residential_address = ResidentialAddress.objects.get(customer=customer)
+        customer_shipping_addresses = ShippingAddress.objects.filter(customer=customer)
 
         for product in shopping_cart.get_cart_products():
             quantity = product.quantity
@@ -190,7 +184,10 @@ class CheckoutView(View):
 
         context = {
             'product_list': shopping_cart.get_cart_products(),
-            'total': order.price
+            'total': order.price,
+            'form': AddressForm(),
+            'residential_address': customer_residential_address,
+            'shipping_addresses': customer_shipping_addresses,
         }
 
         return render(request, 'checkout.html', context)
@@ -198,14 +195,43 @@ class CheckoutView(View):
     @classmethod
     def checkout(cls, request):
         customer = Customer.objects.get(user=request.user)
+        default_shipping_address = ShippingAddress.objects.get(customer=customer, default_shipping_address=True)
+        shipping_address_id = request.POST.get('shipping_address')
         order, _ = Order.objects.get_or_create(customer=customer, pending=True)
+
+        if shipping_address_id:
+            shipping_address = ShippingAddress.objects.get(customer=customer, id=shipping_address_id)
+            order.shipping_address = shipping_address
+            order.save()
+        else:
+            order.shipping_address = default_shipping_address
+
         shopping_cart = ShoppingCart.objects.get(customer=customer)
 
         for product in shopping_cart.get_cart_products():
             product.delete()
 
-        order.pending = True
+        order.pending = False
         order.save()
         messages.info(request, 'Order completed successfully')
 
         return redirect(reverse('products'))
+
+    @classmethod
+    def add_shipping_address(cls, request):
+        customer = Customer.objects.get(user=request.user)
+
+        if request.method == 'POST':
+            form = AddressForm(request.POST)
+            if form.is_valid():
+                ShippingAddress.objects.get_or_create(
+                    country=form.cleaned_data['country'],
+                    region=form.cleaned_data['region'],
+                    city=form.cleaned_data['city'],
+                    street_address=form.cleaned_data['street_address'],
+                    postal_code=form.cleaned_data['postal_code'],
+                    province=form.cleaned_data['province'],
+                    customer=customer
+                )
+
+        return redirect(reverse('order_summary'))

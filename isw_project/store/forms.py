@@ -15,7 +15,7 @@ class RegisterForm(forms.Form):
         validators=[validate_password]
     )
     username = forms.CharField(max_length=100)
-    birth_day = forms.DateField()
+    birth_day = forms.DateField(input_formats=['%d/%m/%Y', '%d/%m/%y'])
     country = forms.CharField(max_length=256)
     region = forms.CharField(max_length=256)
     city = forms.CharField(max_length=256)

@@ -53,8 +53,8 @@
         </div>
 
         <div class="grid-container">
-            {% if filtered_product_list %}
-                {% for product in filtered_product_list %}
+            {% if product_list %}
+                {% for product in product_list %}
                     <div class="product-card">
                         <div>
                             <h2>{{ product.name }}</h2>

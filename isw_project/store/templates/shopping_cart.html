@@ -6,12 +6,22 @@
     <meta charset="UTF-8">
     <title>Shopping cart</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/cart.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
 </head>
 <body>
 
     {% block content %}
 
       {% if cart.get_cart_products %}
+          <div class="header">
+        <div class="header-buttons">
+            <button class="header-button-style"><a href="{% url 'shopping_cart' %}">Cart</a></button>
+            <button class="header-button-style"><a href="{% url 'products' %}">Home</a></button>
+            <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
+        </div>
+
+    </div>
         <div class="items-cart">
           <h1>Shopping cart</h1>
         <a href="{% url 'products' %}">Go to the products list</a>
@@ -48,8 +58,11 @@
 
       {% else %}
           <div class="items-cart">
-          <p>Shopping cart is empty.</p>
-          <a href="{% url 'products' %}">Back home</a>
+          <div>
+              <img src="https://www.ivel.it/wp-content/themes/mrtailor/images/empty_cart_retina.png"/>
+          </div>
+          <h2>Shopping cart is empty.</h2>
+              <a href="{% url 'products' %}" class="checkout-button" >Back home</a>
           </div>
 
       {% endif %}

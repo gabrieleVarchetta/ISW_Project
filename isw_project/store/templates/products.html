@@ -27,7 +27,7 @@
     </div>
 
     <div class="content-section">
-        <h2> Ciao {{  customer }} </h2>
+        <h2> Ciao {{ customer }} </h2>
         <h2 {% if request.GET.search_product %} style="display: none;"{% endif %}>Products</h2>
         <h3 {% if not request.GET.search_product %} style="display: none;"{% endif %}><span class="text-muted">Search result for</span> '{{ request.GET.search_product }}'</h3>
 
@@ -71,20 +71,18 @@
 
         <div class="nav-container">
         {% if is_paginated %}
-            <div class="pagination-buttons">
+            <div class="pagination">
+                <span class="page-links">
                     {% if page_obj.has_previous %}
-                        <div class="navigation-buttons">
-                            <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}{% if order_by %}&order_by={{ order_by }}{% endif %}{% if filter_category %}&filter_category={{ filter_category }}{% endif %}"><</a>
-                        </div>
+                        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}{% if order_by %}&order_by={{ order_by }}{% endif %}{% if filter_category %}&filter_category={{ filter_category }}{% endif %}">previous</a>
                     {% endif %}
                     <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
                     </span>
                     {% if page_obj.has_next %}
-                        <div class="navigation-buttons">
-                            <a href="{{ request.path }}?page={{ page_obj.next_page_number }}{% if order_by %}&order_by={{ order_by }}{% endif %}{% if filter_category %}&filter_category={{ filter_category }}{% endif %}">></a>
-                        </div>
+                        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}{% if order_by %}&order_by={{ order_by }}{% endif %}{% if filter_category %}&filter_category={{ filter_category }}{% endif %}">next</a>
                     {% endif %}
+                </span>
             </div>
         {% endif %}
     </div>

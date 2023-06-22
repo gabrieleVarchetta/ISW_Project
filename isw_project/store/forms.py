@@ -15,13 +15,18 @@ class RegisterForm(forms.Form):
         validators=[validate_password]
     )
     username = forms.CharField(max_length=100)
-    birth_day = forms.DateField()
+    birth_day = forms.DateField(input_formats=['%d/%m/%Y', '%d/%m/%y'])
     country = forms.CharField(max_length=256)
     region = forms.CharField(max_length=256)
     city = forms.CharField(max_length=256)
     street_address = forms.CharField(max_length=256)
     postal_code = forms.CharField(max_length=256)
     province = forms.CharField(max_length=256)
+    card_number = forms.CharField(max_length=16)
+    cardholder_name = forms.CharField(max_length=100)
+    expiration_month = forms.IntegerField()
+    expiration_year = forms.IntegerField()
+    cvv = forms.CharField(max_length=4)
 
 
 class AddressForm(forms.Form):
@@ -31,3 +36,11 @@ class AddressForm(forms.Form):
     street_address = forms.CharField(max_length=100)
     postal_code = forms.CharField(max_length=100)
     province = forms.CharField(max_length=100)
+
+
+class PaymentMethodForm(forms.Form):
+    card_number = forms.CharField(max_length=16)
+    cardholder_name = forms.CharField(max_length=100)
+    expiration_month = forms.IntegerField()
+    expiration_year = forms.IntegerField()
+    cvv = forms.CharField(max_length=4)

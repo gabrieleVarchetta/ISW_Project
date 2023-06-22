@@ -1,11 +1,14 @@
+{% load crispy_forms_filters %}
 {% load static %}
-
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/cart.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
 </head>
 <body>
@@ -32,11 +35,56 @@
                 </div>
 
                 <div class="payment-details">
-                <h3>Payment Details</h3>
+                    <h3>Payment Details</h3>
+                    <hr>
+                    {% if payment_methods %}
+                    <h4>Select one of your payment methods or add a new one</h4>
+                    <form>
+                        <select id="payment_method" name="payment_method" class="styled-select">
+                            {% for method in payment_methods %}
+                            <option value="{{ method.id }}">{{ method }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <input type="submit" name="payment_method" class="btn btn-primary">
+                    </form>
+
+                    <hr>
+                    <form action="{% url 'add_payment_method' %}" method="post">
+                        {% csrf_token %}
+                        {{ payment_method_form|crispy }}
+                        <button class ="btn btn-primary" type="submit" id= "submit_button">Submit</button>
+                    </form>
+                    {% else %}
+                    <h4>Add a payment method</h4>
+                    <form action="{% url 'add_payment_method' %}" method="post">
+                        {% csrf_token %}
+                        {{ payment_method_form|crispy }}
+                        <button class ="btn btn-primary" type="submit" id= "submit_button">Submit</button>
+                    </form>
+                    {% endif %}
                 </div>
 
                 <div class="payment-details">
-                <h3>Shipping details</h3>
+                    <h3>Shipping details</h3>
+                    <hr>
+                    <h4>Select one of your shipping addresses or add a new one</h4>
+                    <form>
+                        <select id="shipping_address" name="shipping_address" class="styled-select">
+                            {% for address in shipping_addresses %}
+                            <option value="{{ address.id }}">{{ address }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <input type="submit" name="shipping_address" class="btn btn-primary">
+                    </form>
+
+                    <hr>
+                    <form action="{% url 'add_shipping_address' %}" method="post">
+                        {% csrf_token %}
+                        {{ address_form|crispy }}
+                        <button class ="btn btn-primary" type="submit" id= "submit_button">Submit</button>
+                    </form>
                 </div>
             </div>
             </div>

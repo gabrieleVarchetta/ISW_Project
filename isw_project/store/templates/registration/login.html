@@ -21,6 +21,15 @@
       <br><br>
 
   <div class="center">
+      {% if messages %}
+                {% for message in messages %}
+                    <div class="container-fluid p-0" id="msg">
+                        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
 	  <form method="post" class="card" novalidate>
 	  	{% csrf_token %}
 	    <h2 class="text-center">Log in to your account</h2>

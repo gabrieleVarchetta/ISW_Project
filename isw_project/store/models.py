@@ -1,8 +1,6 @@
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
-from django.db.models.functions import Lower
 
 # Create your models here.
 
@@ -14,7 +12,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f'Product: {self.name}'
+        return f'Product: {self.name}, Price: {self.price}'
 
 
 class Customer(models.Model):
@@ -45,17 +43,11 @@ class Order(models.Model):
     pending = models.BooleanField(default=True)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
 
-    def __str__(self):
-        return f'{self.id}'
-
 
 class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-
-    def get_price(self):
-        return self.product.price
 
 
 class CartProduct(models.Model):

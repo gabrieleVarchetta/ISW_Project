@@ -14,13 +14,24 @@
 <body>
 
 
-        {% if product_list %}
+
             <div class="checkout-pagination">
             <div class="checkout-buttons-container">
                 <a href="{% url 'products' %}" class="generic-button">Back to product list</a>
                 <a href="{% url 'shopping_cart' %}" class="generic-button">Back to cart</a>
                 <a href="{% url 'checkout' %}" class="checkout-button">Checkout</a>
             </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="container-fluid p-0" id="msg">
+                        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <div class="checkout">
                 <div class="order-summary">
                 <h3>Order Summary</h3>
@@ -90,7 +101,7 @@
             </div>
 
 
-      {% endif %}
+
 
 
 

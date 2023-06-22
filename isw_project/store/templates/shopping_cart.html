@@ -21,10 +21,19 @@
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
 
+          {% if messages %}
+                {% for message in messages %}
+                    <div class="container-fluid p-0" id="msg">
+                        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
     </div>
         <div class="items-cart">
           <h1>Shopping cart</h1>
-        <a href="{% url 'products' %}">Go to the products list</a>
         {% for item in cart.get_cart_products %}
             <div class="cart-product-card">
                 <div class="product-info">
@@ -57,6 +66,12 @@
 </div>
 
       {% else %}
+          {% if messages %}
+                {% for message in messages %}
+                    {#                    iterating through the messages to clean the arrays#}
+{#                    because if you remove the last product from the cart the page will inform you, without messages#}
+                {% endfor %}
+            {% endif %}
           <div class="items-cart">
           <div>
               <img src="https://www.ivel.it/wp-content/themes/mrtailor/images/empty_cart_retina.png"/>

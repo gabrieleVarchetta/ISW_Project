@@ -51,7 +51,15 @@
                 <input type="submit" name="filter_submit" value="Filter" class="filter-button">
             </form>
         </div>
-
+        {% if messages %}
+                {% for message in messages %}
+                    <div class="container-fluid p-0" id="msg">
+                        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         <div class="grid-container">
             {% if product_list %}
                 {% for product in product_list %}

@@ -172,7 +172,7 @@ class FilterProductsView(ListView):
 
         # Recupera le categorie dei prodotti
         context['categories'] = Product.objects.values_list('category', flat=True).distinct()
-        print(context['categories'])
+
         context['customer'] = Customer.objects.get(user=self.request.user)
         return context
 

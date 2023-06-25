@@ -19,7 +19,7 @@
             <div class="checkout-buttons-container">
                 <a href="{% url 'products' %}" class="generic-button">Back to product list</a>
                 <a href="{% url 'shopping_cart' %}" class="generic-button">Back to cart</a>
-                <a href="{% url 'checkout' %}" class="checkout-button">Checkout</a>
+                <a href="{% url 'checkout' %}" class="checkout-button" id="complete_order">Checkout</a>
             </div>
 
             {% if messages %}

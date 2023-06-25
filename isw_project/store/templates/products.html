@@ -12,7 +12,7 @@
 <body>
     <div class="header">
         <div class="header-buttons">
-            <button class="header-button-style"><a href="{% url 'shopping_cart' %}">Cart</a></button>
+            <button class="header-button-style"><a href="{% url 'shopping_cart' %}" id="go_to_shopping_cart">Cart</a></button>
             <button class="header-button-style"><a href="{% url 'products' %}">Home</a></button>
             <button class="header-button-style"><a href="{% url 'logout' %}">Logout</a></button>
         </div>
@@ -27,7 +27,7 @@
     </div>
 
     <div class="content-section">
-        <h2> Ciao {{ customer }} </h2>
+        <h2 id="welcome_message"> Ciao {{ customer }} </h2>
         <h2 {% if request.GET.search_product %} style="display: none;"{% endif %}>Products</h2>
         <h3 {% if not request.GET.search_product %} style="display: none;"{% endif %}><span class="text-muted">Search result for</span> '{{ request.GET.search_product }}'</h3>
 
@@ -65,10 +65,10 @@
                 {% for product in product_list %}
                     <div class="product-card">
                         <div>
-                            <h2>{{ product.name }}</h2>
+                            <h2 id="product_name">{{ product.name }}</h2>
                             <p>{{ product.description }}</p>
                             <p style="font-weight: bolder">{{ product.price }}€</p>
-                            <a href="{% url 'add_to_cart' product.id %}">Add to cart</a>
+                            <a href="{% url 'add_to_cart' product.id %}" id="add_to_cart_button">Add to cart</a>
                         </div>
                     </div>
                 {% endfor %}

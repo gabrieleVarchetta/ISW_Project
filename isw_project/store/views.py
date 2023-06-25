@@ -1,5 +1,5 @@
 from django.contrib.auth import login
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.views.generic import FormView, ListView
 from django.db.models.functions import Lower
 from django.urls import reverse, reverse_lazy
@@ -32,13 +32,18 @@ class RegistrationView(FormView):
 
     @transaction.atomic
     def form_valid(self, form):
-        user = User.objects.create_user(
-            username=form.cleaned_data['username'],
-            email=form.cleaned_data['email'],
-            password=form.cleaned_data['password'],
-            first_name=form.cleaned_data['first_name'],
-            last_name=form.cleaned_data['last_name']
-        )
+        try:
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name']
+            )
+        except IntegrityError:
+            messages.error(self.request, 'Choose a different username.')
+            return redirect(reverse('register'))
+
         customer = Customer.objects.create(
             user=user,
             birth_day=form.cleaned_data['birth_day']
@@ -72,6 +77,7 @@ class RegistrationView(FormView):
             default_payment_method=True
         )
 
+        messages.success(self.request, 'Account created successfully!')
         return super().form_valid(form)
 
 
@@ -135,7 +141,7 @@ class FilterProductsView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
+        queryset = queryset.order_by('id')
         search_product = self.request.GET.get('search_product')
         if search_product:
             queryset = queryset.filter(name__icontains=search_product)
@@ -145,7 +151,7 @@ class FilterProductsView(ListView):
             queryset = queryset.filter(category=filter_category)
 
         order_by = self.request.GET.get('order_by')
-        if order_by and order_by != 'none':
+        if order_by and order_by != 'None':
             if 'name' in order_by:
                 if order_by.startswith('-'):
                     queryset = queryset.order_by(Lower('name')).reverse()
@@ -166,10 +172,7 @@ class FilterProductsView(ListView):
 
         # Recupera le categorie dei prodotti
         context['categories'] = Product.objects.values_list('category', flat=True).distinct()
-
-        # Recupera i risultati filtrati
-        context['filtered_product_list'] = self.get_queryset()
-
+        print(context['categories'])
         context['customer'] = Customer.objects.get(user=self.request.user)
         return context
 
@@ -180,7 +183,6 @@ class CheckoutView(View):
         customer = Customer.objects.get(user=request.user)
         shopping_cart = ShoppingCart.objects.get(customer=customer)
         order, _ = Order.objects.get_or_create(customer=customer, pending=True)
-        customer_residential_address = ResidentialAddress.objects.get(customer=customer)
         customer_shipping_addresses = ShippingAddress.objects.filter(customer=customer)
         customer_payment_methods = PaymentMethod.objects.filter(customer=customer)
 
@@ -197,7 +199,6 @@ class CheckoutView(View):
             'total': order.price,
             'address_form': AddressForm(),
             'payment_method_form': PaymentMethodForm(),
-            'residential_address': customer_residential_address,
             'shipping_addresses': customer_shipping_addresses,
             'payment_methods': customer_payment_methods
         }

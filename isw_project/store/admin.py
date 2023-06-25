@@ -12,7 +12,8 @@ class Product(admin.ModelAdmin):
 
 @admin.register(ProductSalesModel)
 class ProductSales(admin.ModelAdmin):
-    list_display = ['get_product_name', 'get_product_price', 'get_product_category', 'product_total_sales', 'product_total_unit']
+    list_display = ['get_product_name', 'get_product_price', 'get_product_category', 'product_total_sales',
+                    'product_total_unit']
     list_filter = ["product__category"]
     search_fields = ["product__name"]
 

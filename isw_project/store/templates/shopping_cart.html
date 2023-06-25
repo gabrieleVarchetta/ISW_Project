@@ -43,10 +43,10 @@
 
                 <div class="right" >
                    <div class="quantity-section">
-                       <a href="{% url 'increase_product_quantity' item.id %}" class="qty-button" >+</a>
+                       <a href="{% url 'increase_product_quantity' item.id %}" class="qty-button" id="increase_qty">+</a>
                         {{ item.quantity }}
-                        <a href="{% url 'decrease_product_quantity' item.id %}" class="qty-button">-</a>
-                        <a href="{% url 'delete_from_cart' item.id %}" class="remove-button" >Remove</a>
+                        <a href="{% url 'decrease_product_quantity' item.id %}" class="qty-button" id="decrease_qty">-</a>
+                        <a href="{% url 'delete_from_cart' item.id %}" class="remove-button" id="remove-button">Remove</a>
                 </div>
 
                 </div>
@@ -76,7 +76,7 @@
           <div>
               <img src="https://www.ivel.it/wp-content/themes/mrtailor/images/empty_cart_retina.png"/>
           </div>
-          <h2>Shopping cart is empty.</h2>
+          <h2 id="empty_cart_msg">Shopping cart is empty.</h2>
               <a href="{% url 'products' %}" class="checkout-button" >Back home</a>
           </div>
 

@@ -43,6 +43,9 @@ class Order(models.Model):
     pending = models.BooleanField(default=True)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self):
+        return f'Order {self.id}'
+
 
 class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

@@ -20,15 +20,24 @@
         </a>
       </nav>
       <br><br>
-
+        {% if messages %}
+                {% for message in messages %}
+                    <div class="container-fluid p-0" id="msg">
+                        <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
       <div class="container">
       <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
         <br>
-        <button class ="btn btn-primary" type="submit" id= "submit_button">Submit</button>
+        <input type="submit" value="Submit" class="btn btn-primary full-width">
           <hr>
           <p class="text-center">Already have an account? <a href="{% url 'login' %}">Log In Now</a></p>
+          <p class="text-center">You are an admin? <a href="http://127.0.0.1:8000/admin/login/?next=/admin/">Admin Site</a></p>
       </form>
       </div>
   </body>
